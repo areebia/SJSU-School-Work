@@ -1,0 +1,3 @@
+5.10 Answer: 
+
+The answer is an observer pattern by virtue of using the border interface to create the etched border(factory) and the expectation of grouping up similar functioning buttons.
