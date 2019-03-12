@@ -17,9 +17,12 @@
  * Help received from: Isabelle Delmas, Trevor Glassey
  */
 
+pid_t pid; // trial for global variable version; didn't work
+
 void cHandler(int signum)
 {
     printf(" Signaling %d\n", getpid());   // probably the parent pid
+    
 }
 
 void quitHandler(int signum)
@@ -31,6 +34,7 @@ void quitHandler(int signum)
 
 int main(int argc, char *argv[])
 {
+    
     signal(SIGINT, cHandler);
     signal(SIGQUIT, quitHandler);
 
@@ -38,12 +42,13 @@ int main(int argc, char *argv[])
     {
         // creating the multiple files needed
         char fname[argc];
-        sprintf(fname, "%d.txt", i);
+        sprintf(fname, "%d.out", i);
         FILE *f = fopen(fname, "w+");
         fprintf(f, "Executing %s: %s\n", argv[1], argv[i+1]);
         
         // the main forking part
         int rc = fork();
+       
         
         if (rc < 0) {
             // fork failed; exit
@@ -52,7 +57,7 @@ int main(int argc, char *argv[])
         } 
         else if (rc == 0) {
             // child: redirect standard output to a file
-           
+            //pid = getpid();
             close(STDOUT_FILENO); 
 
             // now exec "wc"...
@@ -64,7 +69,7 @@ int main(int argc, char *argv[])
             // parent goes down this path (original process)
             int wc = wait(NULL);
             assert(wc >= 0);
-            fprintf(f, "Finished Executing %s: %s\n", argv[1], argv[i+1]);
+            fprintf(f, "Finished executing %s: %s Exit code = 0\n", argv[1], argv[i+1]);
             
         }
         fclose(f);
@@ -77,6 +82,5 @@ int main(int argc, char *argv[])
 
 
 // notes: sprintf
-
 
 
